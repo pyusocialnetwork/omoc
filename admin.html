@@ -220,7 +220,7 @@
                     <h3 class="text-sm sm:text-base font-bold text-primary flex items-center gap-1.5">
                         <span class="material-symbols-outlined text-lg">database</span> จัดการคลังรูปปฏิทินกิจกรรม
                     </h3>
-                    <p class="text-[10px] text-on-surface-variant">ข้อมูลจะถูกซิงก์สู่ระบบ Cloudflare KV แบบ Serverless ทันทีที่บันทึกหรือลบกิจกรรม</p>
+                    <p class="text-[10px] text-on-surface-variant">ข้อมูลจะถูกซิงก์สู่ระบบ Google Sheets ทันทีที่บันทึกหรือลบกิจกรรม</p>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -295,6 +295,9 @@
     <script>
         const DB_KEY = 'omoc_gallery_database';
 
+        // ⭐ ลิงก์ Google Apps Script Web App ของคุณ
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1Jp5luNHA7vaaGmYPCnlsE7CHM1HXhP2mCClW3tLxWlH0A1U54IpTLuOSvNvqG7QJVw/exec";
+
         const defaultDatabase = {
             "2026-01-10": [
                 {
@@ -362,24 +365,26 @@
             animateFloatingLogo(".bg-logo-2", 180, 180);
         });
 
-        // ⭐ ดึงข้อมูลจาก Cloudflare Pages Functions (/api/data) เป็นอันดับแรก
+        // ดึงข้อมูลจาก Google Sheets Web App เป็นอันดับแรก
         async function initDatabase() {
-            try {
-                const response = await fetch('/api/data', { cache: 'no-cache' });
-                if (response.ok) {
-                    const serverDb = await response.json();
-                    if (serverDb && typeof serverDb === 'object') {
-                        db = Object.keys(serverDb).length > 0 ? serverDb : defaultDatabase;
-                        saveDatabaseLocal(); 
-                        document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.7)]";
-                        document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Cloudflare KV สำเร็จ (ออนไลน์)";
-                        renderEventsList();
-                        updateStats();
-                        return;
+            if (GOOGLE_SCRIPT_URL) {
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, { cache: 'no-cache' });
+                    if (response.ok) {
+                        const serverDb = await response.json();
+                        if (serverDb && typeof serverDb === 'object') {
+                            db = Object.keys(serverDb).length > 0 ? serverDb : defaultDatabase;
+                            saveDatabaseLocal(); 
+                            document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.7)]";
+                            document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Google Sheets สำเร็จ (ออนไลน์)";
+                            renderEventsList();
+                            updateStats();
+                            return;
+                        }
                     }
+                } catch (e) {
+                    console.warn("Unable to fetch from Google Sheets API, checking fallback...", e);
                 }
-            } catch (e) {
-                console.warn("Unable to fetch /api/data, checking static data.json fallback...");
             }
 
             // Fallback 1: data.json
@@ -410,7 +415,7 @@
             }
 
             document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-amber-500";
-            document.getElementById('admin-connection-text').textContent = "โหมดออฟไลน์ (เชื่อมต่อผ่านเบราว์เซอร์เครื่องนี้)";
+            document.getElementById('admin-connection-text').textContent = "โหมดออฟไลน์ (โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต)";
             renderEventsList();
             updateStats();
         }
@@ -423,7 +428,7 @@
             }
         }
 
-        // ⭐ ซิงก์ข้อมูลสู่ Cloudflare KV ผ่าน /api/data
+        // ซิงก์ข้อมูลสู่ Google Sheets ทันที
         async function syncDatabaseWithServer(updatedDb) {
             db = updatedDb;
             saveDatabaseLocal(); 
@@ -431,30 +436,25 @@
             updateStats();
 
             try {
-                const response = await fetch('/api/data', {
+                // ส่งเป็น text/plain เพื่อป้องกันการติด CORS Preflight บน Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(updatedDb)
                 });
                 
-                let result = null;
-                try {
-                    result = await response.json();
-                } catch (jsonErr) {
-                    console.warn("Response is not JSON format", jsonErr);
-                }
-                
-                if (response.ok && result && result.status === "success") {
-                    showToast("บันทึกข้อมูลและซิงก์สู่ Cloudflare KV สำเร็จ!", "success");
+                const result = await response.json();
+                if (result && result.status === "success") {
+                    showToast("บันทึกข้อมูลและซิงก์สู่ Google Sheets สำเร็จ!", "success");
                     document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.7)]";
-                    document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Cloudflare KV สำเร็จ (ออนไลน์)";
+                    document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Google Sheets สำเร็จ (ออนไลน์)";
                 } else {
                     const serverMessage = (result && result.message) ? result.message : `HTTP Error ${response.status}`;
-                    showToast(`บันทึกในเครื่องสำเร็จ แต่ยังไม่ได้ซิงก์ออนไลน์: ${serverMessage}`, "error");
+                    showToast(`เกิดข้อผิดพลาด: ${serverMessage}`, "error");
                 }
             } catch (err) {
-                console.error("Auto-sync connection failed:", err);
-                showToast("บันทึกข้อมูลลงเครื่องสำเร็จ (ฟังก์ชัน /api/data ยังไม่พร้อม)", "error");
+                console.error("Auto-sync failed:", err);
+                showToast("บันทึกในเครื่องสำเร็จ แต่การเชื่อมต่อ Google Sheets ล้มเหลว", "error");
             }
         }
 

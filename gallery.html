@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html class="light" lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <title>OMOC Gallery - คลังดาวน์โหลดรูปภาพกิจกรรม</title>
+    <meta name="description" content="ภาพถ่ายโดย สำนักงานการตลาดและสื่อสารองค์กร มหาวิทยาลัยพายัพ พร้อมดาวน์โหลดไฟล์คุณภาพสูงบน OneDrive">
+    
+    <meta property="og:title" content="OMOC Gallery - คลังดาวน์โหลดรูปภาพกิจกรรม">
+    <meta property="og:description" content="ภาพถ่ายโดย สำนักงานการตลาดและสื่อสารองค์กร มหาวิทยาลัยพายัพ พร้อมดาวน์โหลดไฟล์คุณภาพสูงบน OneDrive">
+    <meta property="og:image" content="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OMOC Photo Gallery">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for smooth layout transitions -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    
+    <!-- Premium Google Fonts: Noto Sans Thai and Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f9f9fc",
+                        "primary": "#004e8b",
+                        "primary-container": "#0066b3",
+                        "on-surface": "#1a1c1e",
+                        "on-surface-variant": "#414751",
+                        "gold": "#DB9B00",
+                        "blue-text": "#0072BB"
+                    },
+                    fontFamily: {
+                        "sans": ["Google Sans Thai", "Noto Sans Thai", "Sarabun", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Google Sans Thai', 'Noto Sans Thai', 'Sarabun', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(249,249,252,1) 40%, rgba(212,153,0,0.005) 100%);
+            position: relative;
+        }
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        .skeleton-box {
+            position: relative;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+        .skeleton-box::after {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 20%,
+                rgba(255, 255, 255, 0.6) 60%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.6s infinite;
+            content: '';
+        }
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .calendar-day-btn {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hover-stroke-btn {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .hover-stroke-btn:hover {
+            background-color: white !important;
+            border-color: #DB9B00 !important;
+            color: #0072BB !important;
+        }
+    </style>
+    <script>
+        function handleLogoError(img) {
+            img.onerror = null; 
+            img.outerHTML = '<div class="w-12 h-12 bg-[#004e8b] text-white rounded-2xl flex flex-col items-center justify-center font-black text-xs select-none shadow-md flex-shrink-0 border border-slate-100"><span class="leading-none">OMC</span><span class="text-[8px] tracking-widest text-[#DB9B00] mt-1">PYU</span></div>';
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col gradient-bg justify-start items-center pb-16">
+
+    <!-- Floating Logo Background Pattern -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <img alt="Pattern" class="bg-logo bg-logo-1 absolute w-[1000px] sm:w-[1600px] opacity-[0.012] select-none filter blur-[1px]" 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7"
+             onerror="this.style.display='none'"
+             style="top: -25%; left: -25%;">
+        <img alt="Pattern" class="bg-logo bg-logo-2 absolute w-[1100px] sm:w-[1800px] opacity-[0.013] select-none" 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7"
+             onerror="this.style.display='none'"
+             style="top: 30%; right: -35%;">
+    </div>
+
+    <!-- MAIN BRAND HEADER -->
+    <header class="content-layer w-full max-w-7xl px-4 sm:px-6 py-8 flex flex-col sm:flex-row justify-center sm:justify-start items-center gap-4 text-center sm:text-left border-b border-slate-100/80">
+        <div class="flex items-center gap-3">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7" 
+                 alt="OMOC Logo" 
+                 onerror="handleLogoError(this)"
+                 class="h-12 sm:h-14 w-auto object-contain flex-shrink-0 select-none">
+            <div>
+                <h1 class="text-xl sm:text-2xl font-extrabold text-primary tracking-tight font-google-sans leading-none">ภาพถ่ายโดย สำนักงานการตลาดและสื่อสารองค์กร</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN INTERACTIVE LAYOUT -->
+    <main class="content-layer w-full max-w-7xl px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mt-8">
+        
+        <!-- ================= LEFT COLUMN: CALENDAR WRAPPER ================= -->
+        <div class="lg:col-span-5 bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-white/60 shadow-xl space-y-6">
+            <h3 class="text-sm font-bold text-primary flex items-center gap-1.5 pb-2 border-b border-slate-100">
+                <span class="material-symbols-outlined text-lg">calendar_month</span> เลือกวันที่จัดกิจกรรม
+            </h3>
+
+            <!-- ⏳ SKELETON LOADING: CALENDAR VIEWPORT -->
+            <div id="calendar-skeleton" class="space-y-4">
+                <div class="h-4 w-1/3 skeleton-box rounded"></div>
+                <div class="flex gap-2 overflow-hidden pb-1">
+                    <div class="h-8 w-20 skeleton-box rounded-full flex-shrink-0"></div>
+                    <div class="h-8 w-20 skeleton-box rounded-full flex-shrink-0"></div>
+                    <div class="h-8 w-20 skeleton-box rounded-full flex-shrink-0"></div>
+                    <div class="h-8 w-20 skeleton-box rounded-full flex-shrink-0"></div>
+                </div>
+                <div class="grid grid-cols-7 gap-2 pt-2 border-t border-slate-100">
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                    <div class="h-4 skeleton-box rounded"></div>
+                </div>
+                <div class="grid grid-cols-7 gap-2.5">
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto bg-slate-300/80"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                    <div class="h-9 w-9 skeleton-box rounded-full mx-auto"></div>
+                </div>
+            </div>
+
+            <!-- ACTUAL CALENDAR INTERFACE -->
+            <div id="actual-calendar-container" class="opacity-0 hidden space-y-5">
+                
+                <!-- MONTH SLIDER -->
+                <div class="space-y-2">
+                    <div class="flex gap-2 overflow-x-auto pb-2 scroll-smooth" id="month-slider-container">
+                    </div>
+                </div>
+
+                <!-- CALENDAR DAYS INTERFACE -->
+                <div class="space-y-3 pt-2 border-t border-slate-100">
+                    <div class="flex justify-between items-center">
+                        <span id="calendar-month-year" class="text-xs font-bold text-gold">มิถุนายน พ.ศ. 2569</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-7 gap-2 text-center text-[11px] font-bold text-on-surface-variant/70 border-b pb-1.5">
+                        <div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-2.5 text-center text-xs" id="calendar-days-grid">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= RIGHT COLUMN: INTERACTIVE PREMIUM ALBUM DETAIL ================= -->
+        <div class="lg:col-span-7 space-y-4">
+            
+            <!-- ⏳ SKELETON LOADING: DETAILS ENGINE -->
+            <div id="cards-skeleton" class="space-y-4">
+                <div class="h-8 w-44 skeleton-box rounded-full"></div>
+                
+                <div class="bg-white/60 border border-slate-100 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-5">
+                    <div class="space-y-3 w-full md:w-2/3">
+                        <div class="h-4 w-24 skeleton-box rounded-full"></div>
+                        <div class="h-6 w-full skeleton-box rounded-md"></div>
+                        <div class="flex gap-4 pt-1">
+                            <div class="h-4 w-28 skeleton-box rounded"></div>
+                            <div class="h-4 w-32 skeleton-box rounded"></div>
+                        </div>
+                    </div>
+                    <div class="h-11 w-full md:w-36 skeleton-box rounded-2xl flex-shrink-0"></div>
+                </div>
+            </div>
+
+            <!-- ACTUAL ALBUM CARDS INTERFACE -->
+            <div id="actual-cards-container" class="opacity-0 hidden bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-white/60 shadow-xl space-y-6">
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900/95 backdrop-blur-md text-white rounded-2xl px-5 py-3.5 shadow-2xl flex items-center gap-2 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+        <span class="material-symbols-outlined text-green-400 font-bold" id="toast-icon">check_circle</span>
+        <span class="text-xs sm:text-sm font-semibold" id="toast-text">สำเร็จ</span>
+    </div>
+
+    <!-- 🔒 Password Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black/40 z-50 hidden items-center justify-center p-4 content-layer">
+        <div class="bg-white rounded-[2rem] p-6 max-w-sm w-full text-center shadow-2xl border-2 border-slate-100 transform scale-95 transition-transform duration-300 space-y-4">
+            <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-amber-600">
+                <span class="material-symbols-outlined text-2xl font-bold">lock</span>
+            </div>
+            <h3 class="text-base font-bold text-on-surface">กิจกรรมนี้ถูกล็อกรหัสผ่านไว้</h3>
+            <p class="text-xs text-on-surface-variant leading-normal">โปรดกรอกรหัสผ่านที่ได้รับจากผู้จัดงานเพื่อเข้าถึงลิงก์ดาวน์โหลดรูปภาพ</p>
+            
+            <input type="password" id="input-event-password" class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 text-center font-mono text-sm bg-slate-50" placeholder="กรอกรหัสผ่านที่นี่">
+            
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button onclick="closePasswordModal()" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-on-surface-variant rounded-full text-xs font-bold transition">ยกเลิก</button>
+                <button onclick="verifyEventPassword()" class="py-2.5 bg-primary hover:bg-primary-container text-white rounded-full text-xs font-bold transition shadow-md">ยืนยันรหัสผ่าน</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const DB_KEY = 'omoc_gallery_database';
+        
+        const thaiMonthNames = [
+            "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+            "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+        ];
+
+        const defaultDatabase = {
+            "2026-01-10": [
+                {
+                    id: "act-1",
+                    title: "กิจกรรมจิตอาสาส่งมอบรอยยิ้มวันเด็กแห่งชาติ 2569",
+                    time: "08:30 น. - 12:30 น.",
+                    location: "ณ โรงเรียนวัดร้องซ้อ จังหวัดลำพูน",
+                    imageCount: 45,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!101&authkey=!ANtMXD_CHILD1",
+                    password: "",
+                    isUpcoming: false
+                }
+            ],
+            "2026-02-14": [
+                {
+                    id: "act-2",
+                    title: "งานสัมมนาทิศทางและยุทธศาสตร์ขับเคลื่อนสื่อดิจิทัลภาคเหนือ",
+                    time: "13:00 น. - 16:30 น.",
+                    location: "ห้องประชุมพายัพภิรมย์ อาคารศูนย์เทคโนโลยีสารสนเทศ",
+                    imageCount: 120,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!102&authkey=!ANtMXD_CHILD2",
+                    password: "",
+                    isUpcoming: false
+                }
+            ],
+            "2026-06-15": [
+                {
+                    id: "act-3",
+                    title: "พิธีนมัสการและปฐมนิเทศนักศึกษาใหม่ ประจำปีการศึกษา 2569",
+                    time: "08:00 น. - 12:00 น.",
+                    location: "โบสถ์เล่ากวง และห้องประชุมกลาง มหาวิทยาลัยพายัพ",
+                    imageCount: 350,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!103&authkey=!ANtMXD_CHILD3",
+                    password: "",
+                    isUpcoming: false
+                }
+            ]
+        };
+
+        let db = {};
+        
+        const today = new Date();
+        let selectedYear = today.getFullYear(); 
+        let selectedMonthIndex = today.getMonth(); 
+        let selectedDateKey = `${selectedYear}-${String(selectedMonthIndex + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        let sharedEventId = null;
+
+        let activeCorrectPassword = "";
+        let activeFolderUrl = "";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const queryDate = urlParams.get('date');
+        const queryId = urlParams.get('id');
+
+        if (queryDate && /^\d{4}-\d{2}-\d{2}$/.test(queryDate)) {
+            selectedDateKey = queryDate;
+            const dateParts = queryDate.split('-');
+            selectedYear = parseInt(dateParts[0], 10);
+            selectedMonthIndex = parseInt(dateParts[1], 10) - 1;
+            if (queryId) {
+                sharedEventId = queryId;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const fetchPromise = fetchDatabase();
+            const delayPromise = new Promise(resolve => setTimeout(resolve, 800));
+            
+            await Promise.all([fetchPromise, delayPromise]);
+
+            hideSkeletonsAndShowContent();
+
+            renderMonthSlider();
+            renderCalendarGrid();
+            renderActivityDetails();
+
+            if (sharedEventId) {
+                setTimeout(() => {
+                    const sharedElement = document.getElementById(sharedEventId);
+                    if (sharedElement) {
+                        sharedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            }
+
+            document.getElementById('input-event-password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verifyEventPassword();
+                }
+            });
+
+            function animateFloatingLogo(selector, maxMoveX, maxMoveY) {
+                gsap.to(selector, {
+                    x: `random(${-maxMoveX}, ${maxMoveX})`,
+                    y: `random(${-maxMoveY}, ${maxMoveY})`,
+                    rotation: "random(-20, 20)",
+                    scale: "random(0.9, 1.1)",
+                    duration: "random(16, 26)",
+                    ease: "sine.inOut",
+                    onComplete: () => animateFloatingLogo(selector, maxMoveX, maxMoveY)
+                });
+            }
+            animateFloatingLogo(".bg-logo-1", 120, 120);
+            animateFloatingLogo(".bg-logo-2", 140, 140);
+        });
+
+        // ⭐ ดึงข้อมูลจาก Cloudflare Pages Functions (/api/data)
+        async function fetchDatabase() {
+            try {
+                const response = await fetch('/api/data', { cache: 'no-cache' });
+                if (response.ok) {
+                    const serverDb = await response.json();
+                    if (serverDb && typeof serverDb === 'object' && Object.keys(serverDb).length > 0) {
+                        db = serverDb;
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Unable to fetch /api/data, checking static data.json...");
+            }
+
+            try {
+                const response = await fetch('data.json', { cache: 'no-cache' });
+                if (response.ok) {
+                    const staticDb = await response.json();
+                    if (staticDb && Object.keys(staticDb).length > 0) {
+                        db = staticDb;
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("data.json not found, using localStorage");
+            }
+
+            try {
+                const saved = localStorage.getItem(DB_KEY);
+                if (saved) {
+                    db = JSON.parse(saved);
+                    if (Object.keys(db).length === 0) {
+                        db = JSON.parse(JSON.stringify(defaultDatabase));
+                    }
+                } else {
+                    db = JSON.parse(JSON.stringify(defaultDatabase));
+                }
+            } catch (e) {
+                db = defaultDatabase;
+            }
+        }
+
+        function hideSkeletonsAndShowContent() {
+            document.getElementById('calendar-skeleton').classList.add('hidden');
+            document.getElementById('cards-skeleton').classList.add('hidden');
+
+            const actualCal = document.getElementById('actual-calendar-container');
+            const actualCard = document.getElementById('actual-cards-container');
+
+            actualCal.classList.remove('hidden');
+            actualCard.classList.remove('hidden');
+
+            gsap.to([actualCal, actualCard], {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.15,
+                ease: "power2.out"
+            });
+        }
+
+        function renderMonthSlider() {
+            const container = document.getElementById('month-slider-container');
+            container.innerHTML = '';
+
+            thaiMonthNames.forEach((month, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectMonth(idx);
+                
+                if (idx === selectedMonthIndex) {
+                    btn.className = "flex-shrink-0 px-4 py-2 bg-primary text-white text-xs font-bold rounded-full shadow-md transition-all active-month-btn";
+                } else {
+                    btn.className = "flex-shrink-0 px-4 py-2 bg-slate-100 hover:bg-slate-200/70 text-on-surface-variant text-xs font-semibold rounded-full transition-all";
+                }
+                btn.textContent = month;
+                container.appendChild(btn);
+            });
+
+            setTimeout(() => {
+                const activeBtn = container.querySelector('.active-month-btn');
+                if (activeBtn) {
+                    activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }, 100);
+        }
+
+        function selectMonth(idx) {
+            selectedMonthIndex = idx;
+            renderMonthSlider();
+            renderCalendarGrid();
+            
+            const prefix = `${selectedYear}-${String(selectedMonthIndex + 1).padStart(2, '0')}`;
+            const matchedDates = Object.keys(db).filter(key => key.startsWith(prefix) && db[key].length > 0);
+            
+            if (matchedDates.length > 0) {
+                selectedDateKey = matchedDates[0];
+            } else {
+                selectedDateKey = null;
+            }
+
+            renderCalendarGrid();
+            renderActivityDetails();
+        }
+
+        function renderCalendarGrid() {
+            const container = document.getElementById('calendar-days-grid');
+            container.innerHTML = '';
+
+            document.getElementById('calendar-month-year').textContent = `${thaiMonthNames[selectedMonthIndex]} พ.ศ. ${selectedYear + 543}`;
+
+            const firstDateOfMonth = new Date(selectedYear, selectedMonthIndex, 1);
+            const startDayIndex = firstDateOfMonth.getDay();
+            const totalDaysInMonth = new Date(selectedYear, selectedMonthIndex + 1, 0).getDate();
+
+            for (let i = 0; i < startDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = "h-9 w-9";
+                container.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= totalDaysInMonth; day++) {
+                const currentStr = `${selectedYear}-${String(selectedMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasEvent = db[currentStr] && db[currentStr].length > 0;
+                
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = "h-9 w-9 rounded-full font-bold calendar-day-btn flex flex-col items-center justify-center relative ";
+
+                if (currentStr === selectedDateKey) {
+                    btn.className += " bg-primary text-white shadow-lg scale-110 z-10";
+                } else if (hasEvent) {
+                    const containsUpcomingOnly = db[currentStr].every(e => e.isUpcoming);
+                    const containsCompletedWithLinks = db[currentStr].some(e => !e.isUpcoming && e.folderUrl);
+                    
+                    if (containsCompletedWithLinks) {
+                        // 🟢 มาร์กปุ่มเป็นวงกลมสีเขียว สำหรับวันที่มีรูปภาพพร้อมดาวน์โหลดแล้ว
+                        btn.className += " bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:scale-105 border border-emerald-500/40 shadow-sm";
+                    } else if (containsUpcomingOnly) {
+                        // 📅 มาร์กปุ่มเป็นวงกลมส้ม สำหรับแผนงานล่วงหน้า
+                        btn.className += " bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 hover:scale-105 border border-amber-500/40";
+                    } else {
+                        btn.className += " bg-gold/10 text-[#0072BB] hover:bg-gold/20 hover:scale-105 border border-gold/40";
+                    }
+                } else {
+                    btn.className += " bg-slate-50 text-on-surface-variant/80 hover:bg-slate-100";
+                }
+
+                btn.textContent = day;
+
+                if (hasEvent) {
+                    const containsCompletedWithLinks = db[currentStr].some(e => !e.isUpcoming && e.folderUrl);
+                    const dot = document.createElement('span');
+                    
+                    if (currentStr === selectedDateKey) {
+                        dot.className = "absolute bottom-1 w-1 h-1 rounded-full bg-white";
+                    } else if (containsCompletedWithLinks) {
+                        dot.className = "absolute bottom-1 w-1 h-1 rounded-full bg-emerald-500 animate-ping";
+                    } else {
+                        dot.className = "absolute bottom-1 w-1 h-1 rounded-full bg-amber-500";
+                    }
+                    btn.appendChild(dot);
+                }
+
+                btn.onclick = () => selectDate(currentStr);
+                container.appendChild(btn);
+            }
+        }
+
+        function selectDate(dateKey) {
+            selectedDateKey = dateKey;
+            sharedEventId = null;
+            renderCalendarGrid();
+            renderActivityDetails();
+        }
+
+        function renderActivityDetails() {
+            const container = document.getElementById('actual-cards-container');
+            
+            if (!selectedDateKey || !db[selectedDateKey] || db[selectedDateKey].length === 0) {
+                container.innerHTML = `
+                    <div class="py-24 text-center text-on-surface-variant/70 flex flex-col items-center justify-center space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300">
+                            <span class="material-symbols-outlined text-4xl">event_busy</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base text-primary font-google-sans">ไม่พบรูปภาพกิจกรรมในวันดังกล่าว</h4>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const events = db[selectedDateKey];
+            const dateParts = selectedDateKey.split('-');
+            const thaiFormattedDate = `${parseInt(dateParts[2])} ${thaiMonthNames[parseInt(dateParts[1]) - 1]} พ.ศ. ${parseInt(dateParts[0]) + 543}`;
+
+            let detailHTML = `
+                <div class="space-y-6">
+                    <div class="border-b border-slate-100 pb-3 flex justify-between items-center flex-wrap gap-2">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-gold block mb-0.5">กิจกรรมในระบบ</span>
+                            <h2 class="text-base sm:text-lg font-black text-primary font-google-sans flex items-center gap-1.5 leading-none">
+                                <span class="material-symbols-outlined text-xl text-primary">calendar_today</span> ${thaiFormattedDate}
+                            </h2>
+                        </div>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold shadow-sm">
+                            ทั้งหมด ${events.length} กิจกรรม
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-6">
+            `;
+
+            events.forEach((event, index) => {
+                const isTargetShared = (sharedEventId === event.id);
+
+                let cardBodyHtml = '';
+
+                if (!event.isUpcoming) {
+                    const downloadBtnHtml = event.password ? 
+                        `<button onclick="requestPasswordAccess('${event.password}', '${event.folderUrl}')" 
+                                 class="hover-stroke-btn sm:w-auto w-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-1.5 shadow-[0_4px_14px_0_rgba(245,158,11,0.3)] transition-all transform hover:-translate-y-0.5 text-xs font-google-sans">
+                            <span class="material-symbols-outlined text-base">lock</span>
+                            ดาวน์โหลด (ต้องใช้รหัสผ่าน)
+                        </button>` :
+                        `<button onclick="redirectToOneDrive('${event.folderUrl}')" 
+                                 class="hover-stroke-btn sm:w-auto w-full bg-[#0072BB] text-white font-extrabold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-1.5 shadow-[0_4px_14px_0_rgba(0,114,187,0.3)] hover:shadow-[0_6px_20px_rgba(0,114,187,0.2)] transition-all transform hover:-translate-y-0.5 text-xs font-google-sans">
+                            <span class="material-symbols-outlined text-base">cloud_download</span>
+                            ดาวน์โหลดรูปภาพทั้งหมด
+                        </button>`;
+
+                    cardBodyHtml = `
+                        <div class="relative rounded-xl overflow-hidden border border-slate-200/60 shadow-sm bg-white p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-gold/10 text-gold flex items-center justify-center flex-shrink-0 border border-gold/20">
+                                    <span class="material-symbols-outlined text-xl">folder_zip</span>
+                                </div>
+                                <div class="text-left min-w-0">
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-xl font-black text-primary font-google-sans tracking-tight leading-none">${event.imageCount || 0}</span>
+                                        <span class="text-[11px] font-bold text-on-surface-variant/80">รูปภาพพร้อมดาวน์โหลด</span>
+                                    </div>
+                                    <p class="text-[9px] text-on-surface-variant/60 leading-none mt-1">
+                                        ไฟล์ความละเอียดสูงบนคลาวด์
+                                    </p>
+                                </div>
+                            </div>
+
+                            ${downloadBtnHtml}
+                        </div>
+                    `;
+                }
+
+                detailHTML += `
+                    <div id="${event.id}" class="p-5 rounded-2xl border transition-all duration-300 space-y-4 ${isTargetShared ? 'border-gold bg-gold/5 ring-4 ring-gold/15' : 'border-slate-100 bg-slate-50/50 hover:bg-slate-100/50'}" style="scroll-margin-top: 100px;">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="bg-gold/15 text-gold px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">celebration</span> กิจกรรมที่ ${index + 1}
+                                    </span>
+                                    <span class="bg-primary/10 text-primary px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">schedule</span> ${event.time}
+                                    </span>
+                                    ${event.password ? `
+                                    <span class="bg-amber-500/10 text-amber-600 px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">lock</span> อัลบั้มล็อกรหัสผ่าน
+                                    </span>` : ''}
+                                </div>
+                                
+                                <button onclick="copyShareLink('${selectedDateKey}', '${event.id}')" 
+                                        class="flex items-center gap-1 py-1 px-3.5 bg-white border border-slate-200/80 text-[#0072BB] hover:border-gold hover:text-gold rounded-full text-[10px] font-bold transition-all shadow-sm">
+                                    <span class="material-symbols-outlined text-xs">share</span>
+                                    แชร์ลิงก์งานนี้
+                                </button>
+                            </div>
+                            
+                            <h3 class="text-sm sm:text-base font-bold text-primary font-google-sans leading-snug">${event.title}</h3>
+                            
+                            <div class="flex items-center gap-2 text-[11px] text-on-surface-variant">
+                                <span class="flex items-center gap-0.5">
+                                    <span class="material-symbols-outlined text-xs text-gold">location_on</span> ${event.location}
+                                </span>
+                            </div>
+                        </div>
+
+                        ${cardBodyHtml}
+                    </div>
+                `;
+            });
+
+            detailHTML += `
+                    </div>
+                    <p class="text-[10px] text-on-surface-variant/70 leading-normal text-center pt-2">
+                        หมายเหตุ: เมื่อกดปุ่มดาวน์โหลด ระบบจะนำพาเข้าสู่โฟลเดอร์ฝากไฟล์ของ OneDrive เพื่อให้เลือกดาวน์โหลดไฟล์จริงแยกได้ตามต้องการครับ
+                    </p>
+                </div>
+            `;
+            
+            container.innerHTML = detailHTML;
+        }
+
+        function requestPasswordAccess(correctPassword, folderUrl) {
+            activeCorrectPassword = correctPassword;
+            activeFolderUrl = folderUrl;
+            
+            const modal = document.getElementById('password-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            const input = document.getElementById('input-event-password');
+            input.value = "";
+            input.focus();
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('password-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            setTimeout(() => {
+                activeCorrectPassword = "";
+                activeFolderUrl = "";
+            }, 500);
+        }
+
+        function verifyEventPassword() {
+            const entered = document.getElementById('input-event-password').value.trim();
+            if (entered === activeCorrectPassword) {
+                triggerToastNotification("รหัสผ่านถูกต้อง กำลังเปิดลิงก์ดาวน์โหลด...");
+                const redirectUrl = activeFolderUrl; 
+                closePasswordModal();
+                if (redirectUrl) {
+                    window.open(redirectUrl, '_blank');
+                }
+            } else {
+                triggerToastNotification("รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง");
+            }
+        }
+
+        function copyShareLink(dateKey, eventId) {
+            const cleanPath = window.location.protocol + '//' + window.location.host + window.location.pathname;
+            const fullShareUri = `${cleanPath}?date=${dateKey}&id=${eventId}`;
+
+            const dummyArea = document.createElement('textarea');
+            dummyArea.value = fullShareUri;
+            document.body.appendChild(dummyArea);
+            dummyArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyArea);
+
+            triggerToastNotification("คัดลอกลิงก์เฉพาะกิจกรรมนี้สำเร็จ! ส่งให้ไลน์อาจารย์ได้ทันทีครับ");
+        }
+
+        function triggerToastNotification(textMessage) {
+            const toastElement = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+
+            if (toastElement && toastText) {
+                toastText.textContent = textMessage;
+                
+                gsap.killTweensOf(toastElement); 
+                gsap.to(toastElement, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.4,
+                    ease: "power3.out",
+                    onStart: () => toastElement.classList.remove('pointer-events-none')
+                });
+
+                setTimeout(() => {
+                    gsap.to(toastElement, {
+                        y: 80,
+                        opacity: 0,
+                        duration: 0.4,
+                        ease: "power3.in",
+                        onComplete: () => toastElement.classList.add('pointer-events-none')
+                    });
+                }, 3500);
+            }
+        }
+
+        function redirectToOneDrive(url) {
+            if (!url) {
+                return;
+            }
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        window.selectMonth = selectMonth;
+        window.selectDate = selectDate;
+        window.redirectToOneDrive = redirectToOneDrive;
+        window.copyShareLink = copyShareLink;
+        window.requestPasswordAccess = requestPasswordAccess;
+        window.closePasswordModal = closePasswordModal;
+        window.verifyEventPassword = verifyEventPassword;
+    </script>
+</body>
+</html>

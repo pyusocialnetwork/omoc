@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html class="light" lang="th">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>OMOC Admin Dashboard - ระบบจัดการรูปภาพกิจกรรมหลังบ้าน</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP for smooth interactive flow animations -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    
+    <!-- Premium Google Fonts: Noto Sans Thai and Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#f9f9fc",
+                        "primary": "#004e8b",
+                        "primary-container": "#0066b3",
+                        "secondary-fixed": "#ffdea7",
+                        "on-surface": "#1a1c1e",
+                        "on-surface-variant": "#414751",
+                        "gold": "#DB9B00",
+                        "blue-text": "#0072BB"
+                    },
+                    fontFamily: {
+                        "sans": ["Google Sans Thai", "Noto Sans Thai", "Sarabun", "sans-serif"],
+                        "google-sans": ["Google Sans Thai", "Noto Sans Thai", "Sarabun", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Google Sans Thai', 'Noto Sans Thai', 'Sarabun', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(249,249,252,1) 40%, rgba(212,153,0,0.01) 100%);
+            position: relative;
+        }
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.02);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 78, 139, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 78, 139, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col gradient-bg justify-start items-center pb-12">
+
+    <!-- Super-Oversized Floating Logo Background Pattern -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <img alt="Background Pattern" class="bg-logo bg-logo-1 absolute w-[1000px] sm:w-[1700px] opacity-[0.014] select-none filter blur-[1px]" 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7"
+             onerror="this.style.display='none'"
+             style="top: -35%; left: -30%;">
+             
+        <img alt="Background Pattern" class="bg-logo bg-logo-2 absolute w-[1100px] sm:w-[2000px] opacity-[0.015] select-none" 
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7"
+             onerror="this.style.display='none'"
+             style="top: 20%; right: -40%;">
+    </div>
+
+    <!-- ================= AUTHENTICATION PORTAL (GATEKEEPER) ================= -->
+    <div id="login-portal-wrapper" class="fixed inset-0 bg-slate-900/45 backdrop-blur-xl z-50 flex items-center justify-center p-4 content-layer">
+        <div id="login-box" class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white/60 space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                    <span class="material-symbols-outlined text-3xl font-bold">admin_panel_settings</span>
+                </div>
+                <h2 class="text-xl font-black text-primary font-google-sans">ลงชื่อเข้าสู่ระบบจัดการรูปภาพ</h2>
+                <p class="text-xs text-on-surface-variant">โปรดกรอกบัญชีผู้ใช้งานเพื่อเข้าควบคุมระบบหลังบ้าน</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-xs sm:text-sm">
+                <div>
+                    <label class="block font-bold text-on-surface mb-1" for="login-username">ชื่อผู้ใช้งาน</label>
+                    <input type="text" id="login-username" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-slate-50" placeholder="Username">
+                </div>
+                <div>
+                    <label class="block font-bold text-on-surface mb-1" for="login-password">รหัสผ่านสำหรับเข้าใช้</label>
+                    <input type="password" id="login-password" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-slate-50" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-primary-container text-white font-bold rounded-xl flex items-center justify-center gap-1.5 shadow-md transition-all">
+                    <span class="material-symbols-outlined text-base">login</span> เข้าสู่หน้าควบคุม
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="content-layer w-full max-w-7xl px-4 sm:px-6 py-6 flex justify-between items-center border-b border-slate-200/50">
+        <div class="flex items-center gap-3">
+            <span class="p-2 bg-primary/10 rounded-full text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined">shield_person</span>
+            </span>
+            <div>
+                <h1 class="text-base sm:text-lg font-bold text-primary leading-none font-google-sans">OMOC Backoffice</h1>
+                <span class="text-[10px] text-on-surface-variant font-medium flex items-center gap-1.5 mt-1">
+                    <span class="inline-block w-2 h-2 rounded-full bg-blue-500 shadow-md" id="admin-connection-indicator"></span>
+                    <span id="admin-connection-text">กำลังเชื่อมต่อฐานข้อมูล...</span>
+                </span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-2">
+            <a href="gallery" target="_blank" class="flex items-center gap-1.5 py-2 px-4 rounded-full bg-slate-100 hover:bg-slate-200 text-on-surface-variant font-bold text-xs sm:text-sm border shadow-sm transition">
+                <span class="material-symbols-outlined text-sm">open_in_new</span>
+                แกลเลอรีรูปภาพ
+            </a>
+            <button onclick="handleLogout()" class="flex items-center gap-1.5 py-2 px-4 rounded-full bg-red-500/10 hover:bg-red-500/20 text-red-600 font-bold text-xs sm:text-sm transition">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                ออกจากระบบ
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="content-layer w-full max-w-7xl px-4 sm:px-6 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        
+        <!-- ================= LEFT COLUMN: FORM ADD/EDIT EVENT ================= -->
+        <div class="lg:col-span-5 bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-white/60 shadow-xl space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h3 class="text-sm sm:text-base font-bold text-primary flex items-center gap-1.5" id="form-mode-title">
+                    <span class="material-symbols-outlined text-lg">edit_calendar</span> เพิ่มกิจกรรมใหม่
+                </h3>
+                <button onclick="resetForm()" class="text-xs text-on-surface-variant hover:text-red-500 font-semibold flex items-center gap-1 transition">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span> ล้างฟอร์ม
+                </button>
+            </div>
+
+            <form id="activity-form" onsubmit="saveActivity(event)" class="space-y-4 text-xs sm:text-sm">
+                <input type="hidden" id="edit-id" value="">
+                
+                <div>
+                    <label class="block font-bold text-on-surface mb-1" for="event-date">วันที่จัดกิจกรรม (ค.ศ. 2026 / พ.ศ. 2569) <span class="text-red-500">*</span></label>
+                    <input type="date" id="event-date" required min="2026-01-01" max="2026-12-31" class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50">
+                    <p class="text-[10px] text-on-surface-variant/80 mt-1">หมายเหตุ: แกลเลอรีแสดงผลเฉพาะปี พ.ศ. 2569 (ค.ศ. 2026)</p>
+                </div>
+
+                <!-- สวิตช์เปิดปิดโหมดแผนงานล่วงหน้า -->
+                <div class="flex items-center gap-2 p-3 bg-gold/5 rounded-xl border border-gold/20">
+                    <input type="checkbox" id="event-upcoming" class="w-4 h-4 text-[#0072BB] rounded focus:ring-primary cursor-pointer" onchange="toggleUpcomingMode(this.checked)">
+                    <label for="event-upcoming" class="font-bold text-primary cursor-pointer select-none text-xs sm:text-sm">เป็นแผนงานถ่ายภาพล่วงหน้า (ยังไม่มีรูปภาพ)</label>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-on-surface mb-1" for="event-title">ชื่อโครงการ / กิจกรรม <span class="text-red-500">*</span></label>
+                    <input type="text" id="event-title" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50" placeholder="เช่น พิธีนมัสการและปฐมนิเทศนักศึกษาใหม่">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-on-surface mb-1" for="event-time">ช่วงเวลาดำเนินงาน <span class="text-red-500">*</span></label>
+                        <input type="text" id="event-time" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50" placeholder="เช่น 08:00 น. - 12:00 น.">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-on-surface mb-1" for="event-location">สถานที่จัดงาน <span class="text-red-500">*</span></label>
+                        <input type="text" id="event-location" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50" placeholder="เช่น โบสถ์เล่ากวง">
+                    </div>
+                </div>
+
+                <div id="image-count-wrapper">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block font-bold text-on-surface" for="event-image-count">จำนวนรูปภาพในกิจกรรม (รูป) <span class="text-red-500">*</span></label>
+                        <button type="button" id="btn-rand-stats" onclick="generateRandomStats()" class="text-[10px] text-gold hover:underline font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">analytics</span> สุ่มจำนวนรูปภาพ
+                        </button>
+                    </div>
+                    <input type="number" id="event-image-count" required min="1" class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50 font-mono" placeholder="ระบุตัวเลข เช่น 150">
+                    <p class="text-[10px] text-on-surface-variant/80 mt-1">จำนวนรูปภาพทั้งหมดที่ถ่ายในกิจกรรมและถูกอัปโหลดขึ้น OneDrive</p>
+                </div>
+
+                <div id="folder-url-wrapper">
+                    <label class="block font-bold text-on-surface mb-1" for="event-folder-url">ลิงก์แชร์โฟลเดอร์ OneDrive ปลายทางสำหรับกดดาวน์โหลดภาพ <span class="text-red-500">*</span></label>
+                    <input type="url" id="event-folder-url" required class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50 font-mono text-xs" placeholder="https://1drv.ms/f/s!AnvX3_Or8s5Bm...">
+                    <p class="text-[10px] text-on-surface-variant/80 mt-1">ผู้ใช้งานจะถูกเปิดลิงก์นี้ในแท็บใหม่เพื่อไปดาวน์โหลดภาพทั้งหมดทันที</p>
+                </div>
+
+                <div id="password-wrapper">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block font-bold text-on-surface" for="event-password">รหัสผ่านเข้าถึงอัลบั้มภาพ (ไม่บังคับ)</label>
+                        <button type="button" id="btn-rand-pass" onclick="generateRandomPassword()" class="text-[10px] text-gold hover:underline font-bold flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">key</span> สุ่มรหัสผ่าน
+                        </button>
+                    </div>
+                    <input type="text" id="event-password" class="w-full rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary focus:border-primary p-3 bg-white/50 font-mono text-xs" placeholder="ปล่อยว่างไว้หากต้องการให้เปิดสาธารณะ">
+                    <p class="text-[10px] text-on-surface-variant/80 mt-1">ผู้ใช้งานทั่วไปจะต้องป้อนรหัสนี้ให้ถูกต้องก่อนจึงจะกดเข้าคลังดาวน์โหลดภาพได้</p>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-[#0072BB] hover:bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-1.5 shadow-md transition hover:scale-[1.02]">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                    <span id="btn-save-text">บันทึกข้อมูลกิจกรรม</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- ================= RIGHT COLUMN: DATABASE VIEWER & ACTIONS ================= -->
+        <div class="lg:col-span-7 bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-white/60 shadow-xl space-y-5 min-h-[500px]">
+            <div class="flex justify-between items-center flex-wrap gap-2 pb-2 border-b border-slate-100">
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-primary flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-lg">database</span> จัดการคลังรูปปฏิทินกิจกรรม
+                    </h3>
+                    <p class="text-[10px] text-on-surface-variant">ข้อมูลจะถูกซิงก์สู่ระบบ Cloudflare KV แบบ Serverless ทันทีที่บันทึกหรือลบกิจกรรม</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="resetToDefaults()" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1 transition">
+                        <span class="material-symbols-outlined text-xs">restart_alt</span> รีเซ็ตค่าเริ่มต้น
+                    </button>
+                    <button onclick="clearAllData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-600 px-3 py-1.5 rounded-full text-[11px] font-bold flex items-center gap-1 transition">
+                        <span class="material-symbols-outlined text-xs">delete_sweep</span> ล้างค่าทั้งหมด
+                    </button>
+                </div>
+            </div>
+
+            <!-- BACKUP & RESTORE UTILITIES -->
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                <span class="text-xs font-bold text-primary flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm text-gold">sd_card</span> จัดการสำรองข้อมูล (data.json)
+                </span>
+                <p class="text-[10px] text-on-surface-variant leading-relaxed">
+                    ระบบจะทำการเขียนบันทึกข้อมูลแบบเรียลไทม์ คุณยังสามารถเลือกส่งออกไฟล์ JSON เพื่อเก็บสำรองในเครื่อง หรือนำเข้าไฟล์เดิมเพื่อกู้คืนได้ที่นี่ครับ
+                </p>
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <button onclick="exportToJson()" class="w-full py-2 px-3 bg-[#0072BB]/10 hover:bg-[#0072BB]/25 text-[#0072BB] font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition">
+                        <span class="material-symbols-outlined text-sm">download</span> ส่งออกข้อมูลแมนนวล
+                    </button>
+                    <button onclick="triggerImportJson()" class="w-full py-2 px-3 bg-gold/10 hover:bg-gold/25 text-gold font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition">
+                        <span class="material-symbols-outlined text-sm">upload</span> นำเข้า data.json
+                    </button>
+                    <input type="file" id="import-json-file" class="hidden" accept=".json" onchange="importFromJson(event)">
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-primary/5 p-4 rounded-2xl border border-primary/10 text-center">
+                    <span class="text-xs block font-bold text-primary">จำนวนวันจัดกิจกรรมที่มีข้อมูล</span>
+                    <span id="stat-days" class="text-2xl font-extrabold text-primary">0</span>
+                </div>
+                <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 text-center">
+                    <span class="text-xs block font-bold text-gold">ภาพพร้อมดาวน์โหลดทั้งหมด (รวม)</span>
+                    <span id="stat-events" class="text-2xl font-extrabold text-[#0072BB]">0</span>
+                </div>
+            </div>
+
+            <!-- LIST OF EVENTS -->
+            <div class="space-y-3 max-h-[320px] overflow-y-auto pr-1" id="events-list-container">
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Notification Toast -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-2 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none">
+        <span class="material-symbols-outlined text-green-400" id="toast-icon">check_circle</span>
+        <span class="text-xs sm:text-sm font-semibold" id="toast-message">บันทึกข้อมูลเรียบร้อยแล้ว</span>
+    </div>
+
+    <!-- Custom Modal Confirm Box -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/40 z-50 hidden items-center justify-center p-4 content-layer">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl transform scale-95 transition-transform duration-300">
+            <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 text-amber-600">
+                <span class="material-symbols-outlined text-2xl font-bold">warning</span>
+            </div>
+            <h3 class="text-base font-bold text-on-surface mb-1" id="confirm-title">ยืนยันการลบข้อมูล?</h3>
+            <p class="text-xs text-on-surface-variant mb-5 leading-normal" id="confirm-text">การกระทำนี้จะลบข้อมูลกิจกรรมออกจากฐานข้อมูลดาวน์โหลดอย่างถาวรและไม่สามารถย้อนคืนได้</p>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="closeConfirmModal()" class="py-2 bg-slate-100 hover:bg-slate-200 text-on-surface-variant rounded-full text-xs font-bold transition">ยกเลิก</button>
+                <button id="btn-confirm-action" class="py-2 bg-red-600 hover:bg-red-700 text-white rounded-full text-xs font-bold transition">ลบข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Interactive Client Script -->
+    <script>
+        const DB_KEY = 'omoc_gallery_database';
+
+        const defaultDatabase = {
+            "2026-01-10": [
+                {
+                    id: "act-1",
+                    title: "กิจกรรมจิตอาสาส่งมอบรอยยิ้มวันเด็กแห่งชาติ 2569",
+                    time: "08:30 น. - 12:30 น.",
+                    location: "ณ โรงเรียนวัดร้องซ้อ จังหวัดลำพูน",
+                    imageCount: 45,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!101&authkey=!ANtMXD_CHILD1",
+                    password: "",
+                    isUpcoming: false
+                }
+            ],
+            "2026-02-14": [
+                {
+                    id: "act-2",
+                    title: "งานสัมมนาทิศทางและยุทธศาสตร์ขับเคลื่อนสื่อดิจิทัลภาคเหนือ",
+                    time: "13:00 น. - 16:30 น.",
+                    location: "ห้องประชุมพายัพภิรมย์ อาคารศูนย์เทคโนโลยีสารสนเทศ",
+                    imageCount: 120,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!102&authkey=!ANtMXD_CHILD2",
+                    password: "",
+                    isUpcoming: false
+                }
+            ],
+            "2026-06-15": [
+                {
+                    id: "act-3",
+                    title: "พิธีนมัสการและปฐมนิเทศนักศึกษาใหม่ ประจำปีการศึกษา 2569",
+                    time: "08:00 น. - 12:00 น.",
+                    location: "โบสถ์เล่ากวง และห้องประชุมกลาง มหาวิทยาลัยพายัพ",
+                    imageCount: 350,
+                    folderUrl: "https://onedrive.live.com/embed?resid=8F99649728BEB2F3!103&authkey=!ANtMXD_CHILD3",
+                    password: "",
+                    isUpcoming: false
+                }
+            ]
+        };
+
+        let db = {};
+        let activeConfirmAction = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const loggedIn = sessionStorage.getItem('omoc_admin_logged');
+            if (loggedIn === 'true') {
+                document.getElementById('login-portal-wrapper').classList.add('hidden');
+            } else {
+                gsap.from('#login-box', { scale: 0.8, opacity: 0, duration: 0.6, ease: "back.out(1.7)" });
+            }
+
+            await initDatabase();
+
+            function animateFloatingLogo(selector, maxMoveX, maxMoveY) {
+                gsap.to(selector, {
+                    x: `random(${-maxMoveX}, ${maxMoveX})`,
+                    y: `random(${-maxMoveY}, ${maxMoveY})`,
+                    rotation: "random(-25, 25)",
+                    scale: "random(0.9, 1.1)",
+                    duration: "random(18, 28)",
+                    ease: "sine.inOut",
+                    onComplete: () => animateFloatingLogo(selector, maxMoveX, maxMoveY)
+                });
+            }
+            animateFloatingLogo(".bg-logo-1", 150, 150);
+            animateFloatingLogo(".bg-logo-2", 180, 180);
+        });
+
+        // ⭐ ดึงข้อมูลจาก Cloudflare Pages Functions (/api/data) เป็นอันดับแรก
+        async function initDatabase() {
+            try {
+                const response = await fetch('/api/data', { cache: 'no-cache' });
+                if (response.ok) {
+                    const serverDb = await response.json();
+                    if (serverDb && typeof serverDb === 'object') {
+                        db = Object.keys(serverDb).length > 0 ? serverDb : defaultDatabase;
+                        saveDatabaseLocal(); 
+                        document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.7)]";
+                        document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Cloudflare KV สำเร็จ (ออนไลน์)";
+                        renderEventsList();
+                        updateStats();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Unable to fetch /api/data, checking static data.json fallback...");
+            }
+
+            // Fallback 1: data.json
+            try {
+                const response = await fetch('data.json', { cache: 'no-cache' });
+                if (response.ok) {
+                    const staticDb = await response.json();
+                    if (staticDb && typeof staticDb === 'object' && Object.keys(staticDb).length > 0) {
+                        db = staticDb;
+                        saveDatabaseLocal();
+                        document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-blue-500";
+                        document.getElementById('admin-connection-text').textContent = "เชื่อมต่อผ่าน data.json (โหมดอ่านอย่างเดียว)";
+                        renderEventsList();
+                        updateStats();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("data.json not found, switching to localStorage");
+            }
+
+            // Fallback 2: localStorage
+            try {
+                const saved = localStorage.getItem(DB_KEY);
+                db = saved ? JSON.parse(saved) : defaultDatabase;
+            } catch (e) {
+                db = defaultDatabase;
+            }
+
+            document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-amber-500";
+            document.getElementById('admin-connection-text').textContent = "โหมดออฟไลน์ (เชื่อมต่อผ่านเบราว์เซอร์เครื่องนี้)";
+            renderEventsList();
+            updateStats();
+        }
+
+        function saveDatabaseLocal() {
+            try {
+                localStorage.setItem(DB_KEY, JSON.stringify(db));
+            } catch (e) {
+                showToast("การบันทึกข้อมูลเข้าเครื่องล้มเหลว", "error");
+            }
+        }
+
+        // ⭐ ซิงก์ข้อมูลสู่ Cloudflare KV ผ่าน /api/data
+        async function syncDatabaseWithServer(updatedDb) {
+            db = updatedDb;
+            saveDatabaseLocal(); 
+            renderEventsList();
+            updateStats();
+
+            try {
+                const response = await fetch('/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedDb)
+                });
+                
+                let result = null;
+                try {
+                    result = await response.json();
+                } catch (jsonErr) {
+                    console.warn("Response is not JSON format", jsonErr);
+                }
+                
+                if (response.ok && result && result.status === "success") {
+                    showToast("บันทึกข้อมูลและซิงก์สู่ Cloudflare KV สำเร็จ!", "success");
+                    document.getElementById('admin-connection-indicator').className = "inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.7)]";
+                    document.getElementById('admin-connection-text').textContent = "เชื่อมต่อระบบ Cloudflare KV สำเร็จ (ออนไลน์)";
+                } else {
+                    const serverMessage = (result && result.message) ? result.message : `HTTP Error ${response.status}`;
+                    showToast(`บันทึกในเครื่องสำเร็จ แต่ยังไม่ได้ซิงก์ออนไลน์: ${serverMessage}`, "error");
+                }
+            } catch (err) {
+                console.error("Auto-sync connection failed:", err);
+                showToast("บันทึกข้อมูลลงเครื่องสำเร็จ (ฟังก์ชัน /api/data ยังไม่พร้อม)", "error");
+            }
+        }
+
+        function toggleUpcomingMode(isUpcoming) {
+            const imgCount = document.getElementById('event-image-count');
+            const folderUrl = document.getElementById('event-folder-url');
+            const passUrl = document.getElementById('event-password');
+            
+            const countWrapper = document.getElementById('image-count-wrapper');
+            const urlWrapper = document.getElementById('folder-url-wrapper');
+            const passWrapper = document.getElementById('password-wrapper');
+
+            if (isUpcoming) {
+                imgCount.removeAttribute('required');
+                imgCount.value = '0';
+                imgCount.disabled = true;
+                countWrapper.classList.add('opacity-45', 'pointer-events-none');
+
+                folderUrl.removeAttribute('required');
+                folderUrl.value = '';
+                folderUrl.disabled = true;
+                urlWrapper.classList.add('opacity-45', 'pointer-events-none');
+
+                passUrl.value = '';
+                passUrl.disabled = true;
+                passWrapper.classList.add('opacity-45', 'pointer-events-none');
+            } else {
+                imgCount.setAttribute('required', 'required');
+                imgCount.disabled = false;
+                countWrapper.classList.remove('opacity-45', 'pointer-events-none');
+
+                folderUrl.setAttribute('required', 'required');
+                folderUrl.disabled = false;
+                urlWrapper.classList.remove('opacity-45', 'pointer-events-none');
+
+                passUrl.disabled = false;
+                passWrapper.classList.remove('opacity-45', 'pointer-events-none');
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            if (user === 'admin' && pass === 'omoc2026') {
+                sessionStorage.setItem('omoc_admin_logged', 'true');
+                gsap.to('#login-portal-wrapper', {
+                    opacity: 0,
+                    y: -50,
+                    duration: 0.5,
+                    onComplete: () => {
+                        document.getElementById('login-portal-wrapper').classList.add('hidden');
+                    }
+                });
+                showToast("ยินดีต้อนรับเข้าสู่ระบบจัดการข้อมูล", "success");
+            } else {
+                showToast("ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง!", "error");
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('omoc_admin_logged');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-portal-wrapper').classList.remove('hidden');
+            gsap.set('#login-portal-wrapper', { opacity: 1, y: 0 });
+            gsap.from('#login-box', { scale: 0.8, opacity: 0, duration: 0.5, ease: "back.out(1.5)" });
+            showToast("ออกจากระบบจัดการเรียบร้อยแล้ว", "success");
+        }
+
+        function renderEventsList() {
+            const container = document.getElementById('events-list-container');
+            container.innerHTML = '';
+
+            const sortedDates = Object.keys(db).sort().reverse();
+
+            if (sortedDates.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-on-surface-variant/70 border border-dashed border-slate-200 rounded-3xl">
+                        <span class="material-symbols-outlined text-4xl mb-2">dashboard_customize</span>
+                        <h4 class="font-bold">ไม่มีประวัติกิจกรรมในฐานข้อมูล</h4>
+                        <p class="text-[11px] mt-0.5">โปรดเริ่มกรอกแบบฟอร์มด้านซ้ายเพื่อเพิ่มข้อมูลใหม่เข้าสู่คลังรูปดาวน์โหลดครับ</p>
+                    </div>
+                `;
+                return;
+            }
+
+            sortedDates.forEach(date => {
+                const events = db[date];
+                if (!events || events.length === 0) return;
+
+                events.forEach(event => {
+                    const row = document.createElement('div');
+                    row.className = "bg-white/60 border border-slate-100 hover:border-gold/50 rounded-2xl p-4 flex justify-between items-center gap-3 transition-all shadow-sm hover:shadow-md";
+                    
+                    const dateParts = date.split('-');
+                    const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                    let typeBadge = '';
+                    if (event.isUpcoming) {
+                        typeBadge = `
+                            <span class="bg-amber-500/10 text-amber-600 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">pending_actions</span> แผนงานล่วงหน้า
+                            </span>
+                        `;
+                    } else {
+                        typeBadge = `
+                            <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-0.5">
+                                <span class="material-symbols-outlined text-xs">calendar_today</span> ${formattedDate}
+                            </span>
+                        `;
+                    }
+
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3 max-w-[75%]">
+                            <div class="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center flex-shrink-0 border border-primary/15">
+                                <span class="material-symbols-outlined">${event.isUpcoming ? 'schedule' : 'collections'}</span>
+                            </div>
+                            <div class="space-y-0.5 min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                                    ${typeBadge}
+                                    ${event.password ? '<span class="material-symbols-outlined text-xs text-amber-500 shrink-0" title="มีรหัสผ่านป้องกันพิเศษ">lock</span>' : ''}
+                                </div>
+                                <h4 class="font-bold text-on-surface text-sm truncate" title="${event.title}">${event.title}</h4>
+                                <div class="flex items-center gap-2 text-[10px] text-on-surface-variant truncate">
+                                    <span class="flex items-center gap-0.5 font-bold text-gold">
+                                        <span class="material-symbols-outlined text-xs">photo_library</span> ${event.isUpcoming ? 'รอถ่ายภาพ' : (event.imageCount || 0) + ' รูป'}
+                                    </span>
+                                    <span>•</span>
+                                    <span class="flex items-center gap-0.5">
+                                        <span class="material-symbols-outlined text-[10px]">location_on</span> ${event.location}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="editEvent('${date}', '${event.id}')" class="p-2 hover:bg-primary/10 text-primary rounded-xl transition" title="แก้ไข">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                            </button>
+                            <button onclick="triggerDeleteEvent('${date}', '${event.id}')" class="p-2 hover:bg-red-500/10 text-red-500 rounded-xl transition" title="ลบ">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            });
+        }
+
+        function updateStats() {
+            const daysCount = Object.keys(db).filter(key => db[key] && db[key].length > 0).length;
+            let totalImages = 0;
+
+            Object.values(db).forEach(list => {
+                if (list) {
+                    list.forEach(act => {
+                        if (!act.isUpcoming) {
+                            totalImages += parseInt(act.imageCount || 0, 10);
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('stat-days').textContent = daysCount;
+            document.getElementById('stat-events').textContent = totalImages;
+        }
+
+        function editEvent(dateStr, eventId) {
+            const events = db[dateStr];
+            if (!events) return;
+
+            const match = events.find(e => e.id === eventId);
+            if (!match) return;
+
+            document.getElementById('edit-id').value = match.id;
+            document.getElementById('event-date').value = dateStr;
+            document.getElementById('event-title').value = match.title;
+            document.getElementById('event-time').value = match.time;
+            document.getElementById('event-location').value = match.location;
+            
+            const isUpcoming = match.isUpcoming || false;
+            document.getElementById('event-upcoming').checked = isUpcoming;
+            toggleUpcomingMode(isUpcoming);
+
+            document.getElementById('event-image-count').value = match.imageCount || '';
+            document.getElementById('event-folder-url').value = match.folderUrl || '';
+            document.getElementById('event-password').value = match.password || '';
+
+            document.getElementById('form-mode-title').innerHTML = `<span class="material-symbols-outlined text-lg">edit_calendar</span> แก้ไขกิจกรรม`;
+            document.getElementById('btn-save-text').textContent = "บันทึกการแก้ไขกิจกรรม";
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById('edit-id').value = '';
+            document.getElementById('activity-form').reset();
+            document.getElementById('event-upcoming').checked = false;
+            toggleUpcomingMode(false);
+            document.getElementById('event-password').value = '';
+            document.getElementById('form-mode-title').innerHTML = `<span class="material-symbols-outlined text-lg">edit_calendar</span> เพิ่มกิจกรรมใหม่`;
+            document.getElementById('btn-save-text').textContent = "บันทึกข้อมูลกิจกรรม";
+        }
+
+        async function saveActivity(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('edit-id').value;
+            const dateStr = document.getElementById('event-date').value;
+            const title = document.getElementById('event-title').value.trim();
+            const time = document.getElementById('event-time').value.trim();
+            const location = document.getElementById('event-location').value.trim();
+            const isUpcoming = document.getElementById('event-upcoming').checked;
+
+            const imageCount = isUpcoming ? 0 : (parseInt(document.getElementById('event-image-count').value, 10) || 0);
+            const folderUrl = isUpcoming ? "" : document.getElementById('event-folder-url').value.trim();
+            const password = isUpcoming ? "" : document.getElementById('event-password').value.trim();
+
+            const activityId = editId || 'act-' + Date.now();
+            const activityData = {
+                id: activityId,
+                date: dateStr,
+                title,
+                time,
+                location,
+                imageCount,
+                folderUrl,
+                password: password || "",
+                isUpcoming: isUpcoming
+            };
+
+            let tempDb = JSON.parse(JSON.stringify(db));
+
+            if (editId) {
+                for (let d in tempDb) {
+                    const idx = tempDb[d].findIndex(e => e.id === editId);
+                    if (idx !== -1) {
+                        tempDb[d].splice(idx, 1);
+                        if (tempDb[d].length === 0) delete tempDb[d];
+                        break;
+                    }
+                }
+            }
+
+            if (!tempDb[dateStr]) tempDb[dateStr] = [];
+            tempDb[dateStr].push(activityData);
+
+            await syncDatabaseWithServer(tempDb);
+            resetForm();
+        }
+
+        function triggerDeleteEvent(dateStr, eventId) {
+            openConfirmModal("ยืนยันการลบกิจกรรม?", "ต้องการลบกิจกรรมออกจากหน้ารายการดาวน์โหลดใช่หรือไม่?", async () => {
+                let tempDb = JSON.parse(JSON.stringify(db));
+                if (tempDb[dateStr]) {
+                    tempDb[dateStr] = tempDb[dateStr].filter(e => e.id !== eventId);
+                    if (tempDb[dateStr].length === 0) {
+                        delete tempDb[dateStr];
+                    }
+                }
+                await syncDatabaseWithServer(tempDb);
+            });
+        }
+
+        function exportToJson() {
+            try {
+                const dataStr = JSON.stringify(db, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "data.json";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                showToast("ส่งออกไฟล์ data.json สำเร็จเรียบร้อย", "success");
+            } catch (err) {
+                showToast("ส่งออกข้อมูลผิดพลาด!", "error");
+            }
+        }
+
+        function triggerImportJson() {
+            document.getElementById('import-json-file').click();
+        }
+
+        function importFromJson(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const importedDb = JSON.parse(e.target.result);
+                    if (typeof importedDb !== 'object') {
+                        throw new Error("Invalid format");
+                    }
+
+                    openConfirmModal("กู้คืนด้วยไฟล์ข้อมูลนำเข้า?", "ระบบจะเขียนข้อมูลกิจกรรมในไฟล์ทับฐานข้อมูลปัจจุบันและซิงก์สู่ระบบทั้งหมด ต้องการดำเนินงานต่อหรือไม่?", async () => {
+                        await syncDatabaseWithServer(importedDb);
+                    });
+
+                } catch (err) {
+                    showToast("ไฟล์ข้อมูลไม่ถูกต้องตามรูปแบบที่กำหนด", "error");
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefaults() {
+            openConfirmModal("รีเซ็ตเป็นค่าตั้งต้น?", "ต้องการดึงข้อมูลกิจกรรมตัวอย่างของมหาวิทยาลัยพายัพกลับมาแทนที่รายการทั้งหมดหรือไม่?", async () => {
+                await syncDatabaseWithServer(JSON.parse(JSON.stringify(defaultDatabase)));
+            });
+        }
+
+        function clearAllData() {
+            openConfirmModal("ล้างฐานข้อมูลทั้งหมด?", "ข้อมูลกิจกรรมทั้งหมดบนปฏิทินของหน้าแกลเลอรีจะถูกลบเกลี้ยงทันที!", async () => {
+                await syncDatabaseWithServer({});
+            });
+        }
+
+        function generateRandomStats() {
+            const randomCount = Math.floor(Math.random() * 450) + 30; 
+            document.getElementById('event-image-count').value = randomCount;
+            const randomId = Math.floor(Math.random() * 500);
+            document.getElementById('event-folder-url').value = `https://onedrive.live.com/embed?resid=8F99649728BEB2F3!${randomId}&authkey=!ANtMXD_SAMPLE`;
+            showToast("สุ่มจำนวนรูปภาพและลิงก์ OneDrive สำเร็จ", "success");
+        }
+
+        function generateRandomPassword() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; 
+            let password = '';
+            for (let i = 0; i < 6; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('event-password').value = password;
+            showToast("สุ่มรหัสผ่านสำเร็จ: " + password, "success");
+        }
+
+        function showToast(message, type = "success") {
+            const toast = document.getElementById('toast-notification');
+            const icon = document.getElementById('toast-icon');
+            const msg = document.getElementById('toast-message');
+
+            msg.textContent = message;
+            if (type === "success") {
+                icon.textContent = "check_circle";
+                icon.className = "material-symbols-outlined text-green-400";
+            } else {
+                icon.textContent = "error";
+                icon.className = "material-symbols-outlined text-red-500";
+            }
+
+            gsap.to(toast, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
+
+            setTimeout(() => {
+                gsap.to(toast, { y: 80, opacity: 0, duration: 0.4, ease: "power3.in" });
+            }, 3500);
+        }
+
+        function openConfirmModal(title, text, action) {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-text').textContent = text;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            activeConfirmAction = () => {
+                action();
+                closeConfirmModal();
+            };
+
+            document.getElementById('btn-confirm-action').onclick = activeConfirmAction;
+        }
+
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            activeConfirmAction = null;
+        }
+
+        window.generateRandomPassword = generateRandomPassword;
+        window.generateRandomStats = generateRandomStats;
+        window.toggleUpcomingMode = toggleUpcomingMode;
+        window.resetForm = resetForm;
+        window.saveActivity = saveActivity;
+        window.editEvent = editEvent;
+        window.triggerDeleteEvent = triggerDeleteEvent;
+        window.exportToJson = exportToJson;
+        window.triggerImportJson = triggerImportJson;
+        window.importFromJson = importFromJson;
+        window.resetToDefaults = resetToDefaults;
+        window.clearAllData = clearAllData;
+        window.handleLogin = handleLogin;
+        window.handleLogout = handleLogout;
+        window.closeConfirmModal = closeConfirmModal;
+    </script>
+</body>
+</html>

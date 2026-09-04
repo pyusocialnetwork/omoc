@@ -241,6 +241,9 @@
     <script type="module">
         const DB_KEY = 'omoc_gallery_database';
         
+        // ⭐ ลิงก์ Google Apps Script Web App ของคุณ
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1Jp5luNHA7vaaGmYPCnlsE7CHM1HXhP2mCClW3tLxWlH0A1U54IpTLuOSvNvqG7QJVw/exec";
+
         const thaiMonthNames = [
             "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
             "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
@@ -352,19 +355,21 @@
             animateFloatingLogo(".bg-logo-2", 140, 140);
         });
 
-        // ⭐ ดึงข้อมูลจาก Cloudflare Pages Functions (/api/data)
+        // ดึงข้อมูลจาก Google Sheets (Apps Script Web App)
         async function fetchDatabase() {
-            try {
-                const response = await fetch('/api/data', { cache: 'no-cache' });
-                if (response.ok) {
-                    const serverDb = await response.json();
-                    if (serverDb && typeof serverDb === 'object' && Object.keys(serverDb).length > 0) {
-                        db = serverDb;
-                        return;
+            if (GOOGLE_SCRIPT_URL) {
+                try {
+                    const response = await fetch(GOOGLE_SCRIPT_URL, { cache: 'no-cache' });
+                    if (response.ok) {
+                        const serverDb = await response.json();
+                        if (serverDb && typeof serverDb === 'object' && Object.keys(serverDb).length > 0) {
+                            db = serverDb;
+                            return;
+                        }
                     }
+                } catch (e) {
+                    console.warn("Unable to fetch from Google Sheets API, checking fallback...", e);
                 }
-            } catch (e) {
-                console.warn("Unable to fetch /api/data, checking static data.json...");
             }
 
             try {

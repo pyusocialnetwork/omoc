@@ -160,7 +160,7 @@
 
   /* ============ Hero ============ */
   .hero {
-    padding: 16px 0 8px;
+    padding: 10px 0 4px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -169,7 +169,7 @@
     animation: fadeUp .8s .1s var(--ease) both;
   }
   .hero h2 {
-    margin: 0 auto 6px;
+    margin: 0 auto 4px;
     font-size: clamp(1.6rem, 4vw, 2.3rem);
     font-weight: 800;
     letter-spacing: normal;
@@ -229,16 +229,16 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 28px;
       align-items: stretch;
-      padding: 8px 0 20px;
+      padding: 6px 0 36px;
     }
     .side.panel {
       position: sticky;
-      top: 80px;
+      top: 76px;
       z-index: 10;
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 195px);
-      min-height: 560px;
+      height: calc(100dvh - 240px);
+      min-height: 510px;
       display: flex;
       flex-direction: column;
     }
@@ -263,19 +263,19 @@
     }
     .days .day, .days .day-empty {
       height: 100%;
-      min-height: 44px;
+      min-height: 40px;
     }
     .legend {
       margin-top: auto;
-      padding-top: 14px;
+      padding-top: 12px;
       flex-shrink: 0;
     }
     .main-col.panel {
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 195px);
-      min-height: 560px;
-      max-height: calc(100dvh - 195px);
+      height: calc(100dvh - 240px);
+      min-height: 510px;
+      max-height: calc(100dvh - 240px);
       overflow-y: auto;
       overscroll-behavior: contain;
       padding-right: 18px;

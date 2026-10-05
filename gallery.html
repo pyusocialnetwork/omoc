@@ -14,7 +14,7 @@
   /* ============ Custom Font: FC Vision ============ */
   @font-face {
     font-family: "FC Vision";
-    src: url("font/FCVision-Regular.woff2") format("woff2");
+    src: url("Font/FCVision-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -22,7 +22,7 @@
 
   @font-face {
     font-family: "FC Vision";
-    src: url("font/FCVision-SemiBold.woff2") format("woff2");
+    src: url("Font/FCVision-SemiBold.woff2") format("woff2");
     font-weight: 600;
     font-style: normal;
     font-display: swap;
@@ -30,7 +30,7 @@
 
   @font-face {
     font-family: "FC Vision";
-    src: url("font/FCVision-Bold.woff2") format("woff2");
+    src: url("Font/FCVision-Bold.woff2") format("woff2");
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -38,7 +38,7 @@
 
   @font-face {
     font-family: "FC Vision";
-    src: url("font/FCVision-Bold.woff2") format("woff2");
+    src: url("Font/FCVision-Bold.woff2") format("woff2");
     font-weight: 800;
     font-style: normal;
     font-display: swap;
@@ -120,50 +120,101 @@
     border-bottom: 1px solid var(--line);
     animation: slideDown .7s var(--ease) both;
   }
-  .topbar .wrap { display: flex; align-items: center; gap: 14px; padding-top: 12px; padding-bottom: 12px; }
-  .brand-logo { height: 46px; width: auto; object-fit: contain; flex-shrink: 0; user-select: none; }
+  .topbar .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 14px;
+    padding-bottom: 14px;
+  }
+  .brand-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+    user-select: none;
+    transition: transform .25s var(--ease);
+  }
+  .brand-logo:hover {
+    transform: scale(1.03);
+  }
   .logo-fallback {
-    width: 46px; height: 46px; border-radius: 14px; background: var(--primary); color: #fff;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 12px; line-height: 1; flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1;
+    flex-shrink: 0;
   }
   .logo-fallback small { font-size: 8px; letter-spacing: .18em; color: var(--gold); margin-top: 3px; }
-  .brand-text { min-width: 0; }
-  .brand-title { margin: 0; font-size: clamp(.95rem, 2.4vw, 1.2rem); font-weight: 800; color: var(--primary); letter-spacing: -.01em; line-height: 1.25; }
-  .brand-sub { margin: 2px 0 0; font-size: .76rem; color: var(--muted); letter-spacing: .04em; }
 
   /* ============ Hero ============ */
-  .hero { padding: 40px 0 8px; animation: fadeUp .8s .1s var(--ease) both; }
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--gold); background: rgba(219, 155, 0, .1); padding: 6px 12px; border-radius: 999px;
+  .hero {
+    padding: 30px 0 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeUp .8s .1s var(--ease) both;
   }
-  .hero h2 { margin: 14px 0 8px; font-size: clamp(1.6rem, 4.6vw, 2.5rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); }
+  .hero h2 {
+    margin: 0 auto 10px;
+    font-size: clamp(1.7rem, 4.6vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.25;
+    color: var(--ink);
+  }
   .hero h2 span { color: var(--primary); background: linear-gradient(90deg, var(--primary), var(--blue)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-  .hero p { margin: 0; max-width: 560px; color: var(--muted); font-size: .98rem; }
+  .hero p {
+    margin: 0 auto;
+    max-width: 620px;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
 
   /* ============ Layout ============ */
-  .layout { display: grid; grid-template-columns: 1fr; gap: 24px; padding: 28px 0 72px; align-items: start; }
-  @media (min-width: 1024px) {
-    .layout { grid-template-columns: 5fr 7fr; gap: 28px; }
-    .side { position: sticky; top: 92px; }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding: 24px 0 72px;
+    align-items: stretch;
+    width: 100%;
   }
 
   .panel {
     background: var(--card);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, .9);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    padding: 22px;
+    padding: 24px 28px;
+    width: 100%;
   }
   .side.panel { animation: fadeUp .8s .2s var(--ease) both; }
-  .main-col.panel { animation: fadeUp .8s .3s var(--ease) both; min-height: 280px; }
+  .main-col.panel { animation: fadeUp .8s .3s var(--ease) both; min-height: 240px; }
 
-  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-  .panel-title { display: flex; align-items: center; gap: 8px; margin: 0; font-size: .95rem; font-weight: 700; color: var(--primary); }
-  .panel-title .ico { color: var(--gold); font-size: 1.2rem; }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+  .panel-title { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 1rem; font-weight: 700; color: var(--primary); }
+  .panel-title .ico { color: var(--gold); font-size: 1.25rem; }
 
   /* Year stepper */
   .stepper { display: inline-flex; align-items: center; gap: 2px; background: #eef2f8; border-radius: 999px; padding: 3px; }
@@ -172,18 +223,25 @@
     display: inline-flex; align-items: center; justify-content: center; transition: background .2s, transform .2s;
   }
   .stepper button:hover { background: #fff; transform: scale(1.06); }
-  .stepper output { min-width: 82px; text-align: center; font-size: .82rem; font-weight: 700; color: var(--ink); }
+  .stepper output { min-width: 82px; text-align: center; font-size: .84rem; font-weight: 700; color: var(--ink); }
 
   /* Month chips */
   .months {
-    position: relative; display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px;
-    scrollbar-width: none; -ms-overflow-style: none; mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+    position: relative;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 4px 14px;
+    width: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
   }
   .months::-webkit-scrollbar { display: none; }
   .chip-month {
-    position: relative; flex-shrink: 0; border: 0; padding: 8px 15px; border-radius: 999px;
-    background: #eef2f8; color: var(--muted); font-size: .82rem; font-weight: 600;
+    position: relative; flex-shrink: 0; border: 0; padding: 8px 18px; border-radius: 999px;
+    background: #eef2f8; color: var(--muted); font-size: .86rem; font-weight: 600;
     transition: background .25s var(--ease), color .25s, transform .25s var(--ease), box-shadow .25s;
   }
   .chip-month:hover { background: #e2e9f3; transform: translateY(-1px); }
@@ -194,39 +252,126 @@
   .chip-month.active.has::after { background: #ffd978; }
 
   /* Calendar */
-  .cal-bar { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 12px; padding-top: 14px; border-top: 1px solid var(--line); }
-  .cal-label { font-size: .9rem; font-weight: 800; color: var(--gold); }
+  .cal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+  }
+  .cal-label {
+    font-size: clamp(1.35rem, 3.2vw, 1.7rem);
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: -.01em;
+    line-height: 1.2;
+  }
   .today-btn {
-    border: 1px solid var(--line); background: #fff; color: var(--blue); font-size: .76rem; font-weight: 700;
-    padding: 5px 12px; border-radius: 999px; transition: all .25s var(--ease);
+    border: 1px solid var(--line); background: #fff; color: var(--blue); font-size: .8rem; font-weight: 700;
+    padding: 6px 16px; border-radius: 999px; transition: all .25s var(--ease);
   }
   .today-btn:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
 
-  .weekdays, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
-  .weekdays { font-size: .75rem; font-weight: 700; color: var(--muted); padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px solid var(--line); }
+  .weekdays, .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px 10px;
+    text-align: center;
+    width: 100%;
+  }
+  .weekdays {
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
   .weekdays div:first-child { color: #d0584a; }
 
   .day {
-    position: relative; width: 100%; max-width: 44px; aspect-ratio: 1; margin: 0 auto; border: 1px solid transparent;
-    border-radius: 50%; background: transparent; color: var(--ink); font-size: .88rem; font-weight: 600;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .3s var(--ease), background .25s, box-shadow .3s, color .25s;
+    position: relative;
+    width: 100%;
+    height: 52px;
+    border: 1.5px solid transparent;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .25s var(--ease), background .25s, box-shadow .25s, color .25s, border-color .25s;
   }
-  .day:hover { background: #eaf0f8; transform: scale(1.08); }
-  .day.is-today { box-shadow: inset 0 0 0 1.5px var(--gold); }
-  .day.ready { background: var(--green-soft); color: #0a7a54; border-color: rgba(15, 157, 107, .3); }
+  .day:hover {
+    background: #eaf0f8;
+    transform: translateY(-2px);
+  }
+  .day.is-today {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+  .day.ready {
+    background: var(--green-soft);
+    color: #0a7a54;
+    border-color: rgba(15, 157, 107, .28);
+  }
   .day.ready:hover { background: #d3f0e3; }
-  .day.upcoming { background: var(--amber-soft); color: #a56a00; border-color: rgba(245, 158, 11, .35); }
+  .day.upcoming {
+    background: var(--amber-soft);
+    color: #a56a00;
+    border-color: rgba(245, 158, 11, .32);
+  }
   .day.upcoming:hover { background: #ffecc2; }
-  .day.other { background: rgba(219, 155, 0, .12); color: var(--blue); border-color: rgba(219, 155, 0, .35); }
-  .day.selected { background: var(--primary); color: #fff; border-color: transparent; transform: scale(1.1); box-shadow: 0 10px 20px -8px rgba(0, 78, 139, .65); z-index: 2; }
-  .day .dot { position: absolute; bottom: 14%; width: 4px; height: 4px; border-radius: 50%; background: var(--amber); }
-  .day.ready .dot { background: var(--green); animation: pulse 2s infinite; }
-  .day.selected .dot { background: #fff; animation: none; }
+  .day.other {
+    background: rgba(219, 155, 0, .12);
+    color: var(--blue);
+    border-color: rgba(219, 155, 0, .32);
+  }
+  .day.selected {
+    background: var(--primary);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -8px rgba(0, 78, 139, .65);
+    z-index: 2;
+  }
+  .day .dot {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+  .day.ready .dot {
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  .day.selected .dot {
+    background: #fff;
+    animation: none;
+  }
   .day.anim { animation: pop .45s var(--ease) both; animation-delay: var(--d, 0ms); }
-  .day-empty { aspect-ratio: 1; }
+  .day-empty { width: 100%; height: 52px; }
 
-  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: .74rem; color: var(--muted); }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 24px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    font-size: .8rem;
+    color: var(--muted);
+    width: 100%;
+  }
   .legend span { display: inline-flex; align-items: center; gap: 6px; }
   .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .legend .l-ready { background: var(--green); }
@@ -304,8 +449,8 @@
   .sk::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent); animation: shimmer 1.5s infinite; }
   .sk-stack { display: grid; gap: 14px; }
   .sk-row { display: flex; gap: 8px; overflow: hidden; }
-  .sk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
-  .sk-round { aspect-ratio: 1; border-radius: 50%; max-width: 40px; width: 100%; margin: 0 auto; }
+  .sk-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px 10px; }
+  .sk-round { height: 48px; border-radius: 14px; width: 100%; }
   .content-in { animation: fadeUp .7s var(--ease) both; }
 
   /* ============ Modal ============ */
@@ -364,8 +509,10 @@
   @media (max-width: 480px) {
     .wrap { padding: 0 14px; }
     .panel { padding: 16px; border-radius: 20px; }
-    .weekdays, .days { gap: 3px; }
-    .hero { padding-top: 28px; }
+    .weekdays, .days { gap: 4px; }
+    .day { height: 42px; font-size: .88rem; border-radius: 10px; }
+    .day-empty { height: 42px; }
+    .hero { padding-top: 24px; }
     .event { padding: 16px; }
   }
 
@@ -390,23 +537,18 @@
   <header class="topbar">
     <div class="wrap">
       <img id="brand-logo" class="brand-logo" alt="OMOC Logo" data-logo="brand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7">
-      <div class="brand-text">
-        <h1 class="brand-title">ภาพถ่ายโดย สำนักงานการตลาดและสื่อสารองค์กร</h1>
-        <p class="brand-sub">OMOC GALLERY · มหาวิทยาลัยพายัพ</p>
-      </div>
     </div>
   </header>
 
   <div class="wrap">
     <section class="hero">
-      <span class="eyebrow"><span class="ico" data-i="image"></span> Photo Archive</span>
       <h2>คลังดาวน์โหลด<span>รูปภาพกิจกรรม</span></h2>
       <p>เลือกวันที่จัดกิจกรรมจากปฏิทิน แล้วดาวน์โหลดไฟล์ภาพคุณภาพสูงได้ทันที</p>
     </section>
 
     <main class="layout">
 
-      <!-- LEFT: Calendar -->
+      <!-- TOP: Calendar -->
       <aside class="side panel" aria-label="ปฏิทินกิจกรรม">
         <div class="panel-head">
           <h3 class="panel-title"><span class="ico" data-i="calendar"></span> เลือกวันที่จัดกิจกรรม</h3>
@@ -425,7 +567,7 @@
             <div class="sk" style="height:34px;width:84px;border-radius:999px;flex-shrink:0"></div>
             <div class="sk" style="height:34px;width:84px;border-radius:999px;flex-shrink:0"></div>
           </div>
-          <div class="sk" style="height:16px;width:38%"></div>
+          <div class="sk" style="height:28px;width:130px;border-radius:8px"></div>
           <div class="sk-grid"><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div><div class="sk" style="height:14px"></div></div>
           <div class="sk-grid">
             <div class="sk sk-round"></div><div class="sk sk-round"></div><div class="sk sk-round"></div><div class="sk sk-round"></div><div class="sk sk-round"></div><div class="sk sk-round"></div><div class="sk sk-round"></div>
@@ -453,7 +595,7 @@
         </div>
       </aside>
 
-      <!-- RIGHT: Albums -->
+      <!-- BOTTOM: Albums & Event Details -->
       <section class="main-col panel" aria-live="polite" aria-label="รายละเอียดกิจกรรม">
         <div id="cards-skeleton" class="sk-stack" aria-hidden="true">
           <div class="sk" style="height:22px;width:190px;border-radius:999px"></div>
@@ -659,7 +801,7 @@
   function renderCalendar(animate) {
     const grid = $('days');
     grid.replaceChildren();
-    $('cal-label').textContent = THAI_MONTHS[monthIdx] + ' พ.ศ. ' + (year + 543);
+    $('cal-label').textContent = THAI_MONTHS[monthIdx];
 
     const startDay = new Date(year, monthIdx, 1).getDay();
     const total = new Date(year, monthIdx + 1, 0).getDate();

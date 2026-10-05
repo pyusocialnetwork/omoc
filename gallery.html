@@ -119,10 +119,11 @@
 
   /* ============ Header: Liquid Glass Capsule ============ */
   .topbar {
-    position: sticky; top: 26px; z-index: 30;
+    position: sticky; top: 22px; z-index: 30;
     display: flex;
     justify-content: center;
     padding: 0 16px;
+    margin-bottom: 24px;
     background: transparent;
     border-bottom: 0;
     animation: slideDown .7s var(--ease) both;
@@ -329,15 +330,15 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 28px;
       align-items: stretch;
-      padding: 28px 0 24px;
+      padding: 16px 0 24px;
     }
     .side.panel {
       position: sticky;
-      top: 104px;
+      top: 118px;
       z-index: 10;
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 148px);
+      height: calc(100dvh - 156px);
       min-height: 520px;
       display: flex;
       flex-direction: column;
@@ -373,9 +374,9 @@
     .main-col.panel {
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 148px);
+      height: calc(100dvh - 156px);
       min-height: 520px;
-      max-height: calc(100dvh - 148px);
+      max-height: calc(100dvh - 156px);
       overflow-y: auto;
       overscroll-behavior: contain;
       padding-right: 18px;

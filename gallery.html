@@ -130,8 +130,10 @@
     pointer-events: auto;
     display: inline-flex;
     align-items: center;
-    gap: 16px;
-    padding: 8px 24px 8px 16px;
+    justify-content: center;
+    gap: 22px;
+    min-width: clamp(380px, 44vw, 660px);
+    padding: 10px 44px 10px 32px;
     border-radius: 9999px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.48) 100%);
     backdrop-filter: blur(20px) saturate(180%);
@@ -621,6 +623,7 @@
   @media (max-width: 480px) {
     .wrap { padding: 0 14px; }
     .header-capsule {
+      min-width: auto;
       padding: 6px 18px 6px 12px;
       gap: 12px;
       border-radius: 9999px;

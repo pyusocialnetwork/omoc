@@ -115,73 +115,79 @@
     .wrap { max-width: 1680px; padding: 0 clamp(20px, 3vw, 48px); }
   }
 
-  /* ============ Header ============ */
+  /* ============ Header: Liquid Glass Capsule ============ */
   .topbar {
-    position: sticky; top: 0; z-index: 20;
-    background: rgba(255, 255, 255, .72);
-    backdrop-filter: saturate(1.6) blur(14px);
-    -webkit-backdrop-filter: saturate(1.6) blur(14px);
-    border-bottom: 1px solid var(--line);
-    animation: slideDown .7s var(--ease) both;
-  }
-  .topbar .wrap {
+    position: sticky; top: 12px; z-index: 30;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding-top: 14px;
-    padding-bottom: 14px;
+    padding: 0 16px;
+    background: transparent;
+    border-bottom: 0;
+    animation: slideDown .7s var(--ease) both;
+    pointer-events: none;
+  }
+  .header-capsule {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 24px 8px 16px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.48) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    box-shadow: 
+      0 16px 36px -10px rgba(0, 78, 139, 0.16),
+      0 4px 12px rgba(16, 40, 70, 0.04),
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+      inset 0 -1.5px 2px rgba(0, 78, 139, 0.04);
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .header-capsule:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 20px 42px -10px rgba(0, 78, 139, 0.22),
+      0 6px 16px rgba(16, 40, 70, 0.06),
+      inset 0 1.5px 2px rgba(255, 255, 255, 1);
   }
   .brand-logo {
-    height: 52px;
+    height: 44px;
     width: auto;
     object-fit: contain;
     user-select: none;
+    flex-shrink: 0;
     transition: transform .25s var(--ease);
   }
   .brand-logo:hover {
-    transform: scale(1.03);
+    transform: scale(1.05);
   }
-  .logo-fallback {
-    width: 50px;
-    height: 50px;
-    border-radius: 14px;
-    background: var(--primary);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 13px;
-    line-height: 1;
+  .capsule-divider {
+    width: 1.5px;
+    height: 30px;
+    background: linear-gradient(180deg, transparent, rgba(0, 78, 139, 0.22), transparent);
     flex-shrink: 0;
   }
-  .logo-fallback small { font-size: 8px; letter-spacing: .18em; color: var(--gold); margin-top: 3px; }
-
-  /* ============ Hero ============ */
-  .hero {
-    padding: 10px 0 4px;
-    text-align: center;
+  .capsule-content {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    animation: fadeUp .8s .1s var(--ease) both;
+    min-width: 0;
   }
-  .hero h2 {
-    margin: 0 auto 6px;
-    font-size: clamp(1.85rem, 4.4vw, 2.6rem);
+  .capsule-title {
+    margin: 0;
+    font-size: clamp(1.22rem, 2.4vw, 1.52rem);
     font-weight: 800;
-    letter-spacing: normal;
-    line-height: 1.4;
+    letter-spacing: -.01em;
+    line-height: 1.35;
     color: var(--ink);
+    white-space: nowrap;
   }
-  .hero h2 span {
+  .capsule-title span {
     display: inline-block;
     padding-top: 0.12em;
-    padding-bottom: 0.35em;
+    padding-bottom: 0.28em;
     margin-top: -0.12em;
-    margin-bottom: -0.35em;
+    margin-bottom: -0.28em;
     vertical-align: baseline;
     color: var(--primary);
     background: linear-gradient(90deg, var(--primary), var(--blue));
@@ -189,20 +195,29 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-  .hero p {
-    margin: 0 auto;
-    max-width: 660px;
-    color: var(--muted);
-    font-size: 1.05rem;
-    line-height: 1.55;
+  .logo-fallback {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 11px;
+    line-height: 1;
+    flex-shrink: 0;
   }
+  .logo-fallback small { font-size: 7px; letter-spacing: .18em; color: var(--gold); margin-top: 2px; }
 
   /* ============ Layout ============ */
   .layout {
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding: 12px 0 32px;
+    padding: 16px 0 28px;
     align-items: stretch;
     width: 100%;
     min-width: 0;
@@ -229,16 +244,16 @@
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 28px;
       align-items: stretch;
-      padding: 6px 0 36px;
+      padding: 14px 0 24px;
     }
     .side.panel {
       position: sticky;
-      top: 76px;
+      top: 84px;
       z-index: 10;
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 240px);
-      min-height: 510px;
+      height: calc(100dvh - 128px);
+      min-height: 520px;
       display: flex;
       flex-direction: column;
     }
@@ -273,9 +288,9 @@
     .main-col.panel {
       min-width: 0;
       width: 100%;
-      height: calc(100dvh - 240px);
-      min-height: 510px;
-      max-height: calc(100dvh - 240px);
+      height: calc(100dvh - 128px);
+      min-height: 520px;
+      max-height: calc(100dvh - 128px);
       overflow-y: auto;
       overscroll-behavior: contain;
       padding-right: 18px;
@@ -605,11 +620,19 @@
 
   @media (max-width: 480px) {
     .wrap { padding: 0 14px; }
+    .header-capsule {
+      padding: 6px 18px 6px 12px;
+      gap: 12px;
+      border-radius: 9999px;
+      max-width: 100%;
+    }
+    .brand-logo { height: 36px; }
+    .capsule-title { font-size: 1.05rem; }
+    .capsule-divider { height: 24px; }
     .panel { padding: 16px; border-radius: 20px; }
     .weekdays, .days { gap: 4px; }
     .day { height: 42px; font-size: .88rem; border-radius: 10px; }
     .day-empty { height: 42px; }
-    .hero { padding-top: 24px; }
     .event { padding: 16px; }
   }
 
@@ -630,22 +653,21 @@
 
 <div class="page">
 
-  <!-- Header -->
+  <!-- Header: Floating Liquid Glass Capsule -->
   <header class="topbar">
-    <div class="wrap">
+    <div class="header-capsule">
       <img id="brand-logo" class="brand-logo" alt="OMOC Logo" data-logo="brand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9SJSQUgIoHn8_wxke2-yYluqHi6eamoTmDS2ZbyZr9luNW9BHTzWP1fyIiuZly-IwRZ_wgVrgsv5IdOEmx5Ml1Lt72dxcBFCnWkNxqumrwo1vfJveQQvkLTLaqKkLKLX_yPUyquY-zegzbF51Mt7Bp4FEacjxtIgsr0mEmZLBSzeRCIcT4xBi23fX7zg4fRP7n90IJgKynCRbKmo0XHE3KgrvK6ihDv4re4-GB2u_IqhitBH_EPPJeKKMsz6sKfm7">
+      <div class="capsule-divider" aria-hidden="true"></div>
+      <div class="capsule-content">
+        <h1 class="capsule-title">คลังดาวน์โหลด<span>รูปภาพกิจกรรม</span></h1>
+      </div>
     </div>
   </header>
 
   <div class="wrap">
-    <section class="hero">
-      <h2>คลังดาวน์โหลด<span>รูปภาพกิจกรรม</span></h2>
-      <p>เลือกวันที่จัดกิจกรรมจากปฏิทิน แล้วดาวน์โหลดไฟล์ภาพคุณภาพสูงได้ทันที</p>
-    </section>
-
     <main class="layout">
 
-      <!-- TOP: Calendar -->
+      <!-- TOP/LEFT: Calendar -->
       <aside class="side panel" aria-label="ปฏิทินกิจกรรม">
         <div class="panel-head">
           <h3 class="panel-title"><span class="ico" data-i="calendar"></span> เลือกวันที่จัดกิจกรรม</h3>
